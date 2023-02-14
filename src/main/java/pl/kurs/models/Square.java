@@ -1,5 +1,8 @@
 package pl.kurs.models;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,6 +10,9 @@ import java.util.Objects;
 public class Square extends Shape {
     private static final List<Square> CACHE = new ArrayList<>();
 
+    @JsonProperty("type")
+    private final String className = Square.class.getSimpleName();
+    @JsonProperty("side")
     private double side;
 
     private Square(double side) {

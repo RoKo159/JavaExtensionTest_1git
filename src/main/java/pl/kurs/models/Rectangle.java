@@ -1,5 +1,8 @@
 package pl.kurs.models;
 
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,9 +10,12 @@ import java.util.Objects;
 public class Rectangle extends Shape {
     private static final List<Rectangle> CACHE = new ArrayList<>();
 
+    @JsonProperty("type")
+    private final String className = Rectangle.class.getSimpleName();
+    @JsonProperty("length")
     private double length;
+    @JsonProperty("width")
     private double width;
-
 
     private Rectangle(double length, double width) {
         this.length = length;

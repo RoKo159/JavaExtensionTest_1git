@@ -1,5 +1,7 @@
 package pl.kurs.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,8 +9,12 @@ import java.util.Objects;
 public class Circle extends Shape{
 
     private static final List<Circle> CACHE = new ArrayList<>();
-    private double radius;
 
+    @JsonProperty("type")
+    private final String className = Circle.class.getSimpleName();
+
+    @JsonProperty("radius")
+    private double radius;
 
     private Circle(double radius) {
         this.radius = radius;
