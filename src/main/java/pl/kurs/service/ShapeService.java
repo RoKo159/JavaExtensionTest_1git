@@ -34,7 +34,6 @@ public class ShapeService {
     public Shape findShapeWithLargestPerimeter(List<Shape> shapes, Class type) {
         return shapes
                 .stream()
-                .filter(x -> x instanceof Shape)
                 .filter(x -> x.getClass().equals(type))
                 .max(Comparator.comparingDouble(Shape::getPerimeter))
                 .orElseThrow(() -> new RuntimeException("No shapes of the specified type found"));
