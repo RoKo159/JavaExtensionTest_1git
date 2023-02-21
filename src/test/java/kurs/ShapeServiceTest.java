@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 
 
-
 import org.junit.Before;
 import org.junit.Test;
 import pl.kurs.customSerializer.ObjectMapperHolder;
@@ -32,7 +31,6 @@ public class ShapeServiceTest {
 
 
     List<Shape> shapeList;
-    List<Shape> emptyShapeList;
     private ShapeFactory shapeFactory;
     private ShapeService shapeService;
     private ObjectMapper objectMapper;
@@ -40,13 +38,13 @@ public class ShapeServiceTest {
     @Before
     public void init() {
         shapeList = new ArrayList<>();
-        emptyShapeList = new ArrayList<>();
         shapeFactory = new ShapeFactory();
         shapeService = new ShapeService();
         objectMapper = ObjectMapperHolder.INSTANCE.getObjectMapper();
 
         shapeList.add(shapeFactory.createCircle(10));
         shapeList.add(shapeFactory.createSquare(10));
+        shapeList.add(shapeFactory.createRectangle(10,15));
 
 
     }
@@ -58,7 +56,7 @@ public class ShapeServiceTest {
         shapeService.exportShapesToJSON(shapeList, "src/test/resources/testShapes.json");
         String result = objectMapper.readTree(new File("src/test/resources/testShapes.json")).toString();
 
-        String jsonStringSample = "[{\"type\":\"Circle\",\"radius\":10.0},{\"type\":\"Square\",\"side\":10.0}]";
+        String jsonStringSample = "[{\"type\":\"Circle\",\"radius\":10.0},{\"type\":\"Square\",\"side\":10.0},{\"type\":\"Rectangle\",\"length\":10.0,\"width\":15.0}]";
 
         assertEquals(result, jsonStringSample);
 
@@ -67,15 +65,10 @@ public class ShapeServiceTest {
 
     @Test
     public void testImportShapeFromJson() throws IOException {
-        List<Shape> shapeList = new ArrayList<>();
-        shapeList.add(shapeFactory.createCircle(10));
-        shapeList.add(shapeFactory.createSquare(10));
 
         List<Shape> resultList = shapeService.importShapesFromJSON("src/test/resources/testShapes.json");
 
-        System.out.println(shapeList);
-        System.out.println(resultList);
-        assertEquals(shapeList.get(1), resultList.get(1));
+        assertEquals(shapeList, resultList);
     }
 
 
@@ -96,6 +89,8 @@ public class ShapeServiceTest {
 
     @Test
     public void shouldThrowNewRuntimeExceptionWhenShapeListIsEmpty() {
+        List<Shape> emptyShapeList = new ArrayList<>();
+
         Exception e = assertThrows(RuntimeException.class, () -> shapeService.findShapeWithLargestArea(emptyShapeList));
 
         Assertions.assertThat(e)
