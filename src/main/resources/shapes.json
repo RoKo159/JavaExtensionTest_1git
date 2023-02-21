@@ -1,1 +1,1 @@
-[{"type":"Circle","radius":10.0},{"type":"Circle","radius":8.0}]
+[{"type":"Circle","radius":10.0},{"type":"Circle","radius":8.0},{"type":"Square","side":10.0},{"type":"Rectangle","length":20.0,"width":20.0}]

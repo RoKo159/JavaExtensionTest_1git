@@ -2,9 +2,9 @@ package kurs;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
+
 
 
 import org.junit.Before;
@@ -17,10 +17,10 @@ import pl.kurs.service.ShapeFactory;
 import pl.kurs.service.ShapeService;
 
 import java.io.File;
+
 import java.io.IOException;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 
 import java.util.List;
@@ -55,52 +55,29 @@ public class ShapeServiceTest {
     @Test
     public void testSaveShapeListThenCheckFileIsCorrect() throws JsonProcessingException, IOException {
 
-        objectMapper.writeValue(new File("testImportJson.json"), shapeList);
-        JsonNode root = objectMapper.readTree(new File("testImportJson.json"));
-        assertTrue(root.isArray());
-        assertTrue(root.size() == 2);
-        JsonNode firstShape = root.get(0);
-        assertTrue(firstShape.get("type").asText().equals("Circle"));
-        assertTrue(firstShape.get("radius").asDouble() == 10.0);
-        JsonNode secondShape = root.get(1);
-        assertTrue(secondShape.get("type").asText().equals("Square"));
-        assertTrue(secondShape.get("side").asDouble() == 10.0);
-        Files.delete(Paths.get("testImportJson.json"));
+        shapeService.exportShapesToJSON(shapeList, "src/test/resources/testShapes.json");
+        String result = objectMapper.readTree(new File("src/test/resources/testShapes.json")).toString();
+
+        String jsonStringSample = "[{\"type\":\"Circle\",\"radius\":10.0},{\"type\":\"Square\",\"side\":10.0}]";
+
+        assertEquals(result, jsonStringSample);
+
 
     }
 
     @Test
-    public void testExportShapesToJSON() throws IOException {
-        shapeService.exportShapesToJSON(shapeList, "testImportJson.json");
-        JsonNode root = objectMapper.readTree(new File("testImportJson.json"));
-        assertTrue(root.isArray());
-        assertTrue(root.size() == 2);
-        JsonNode firstShape = root.get(0);
-        assertTrue(firstShape.get("type").asText().equals("Circle"));
-        assertTrue(firstShape.get("radius").asDouble() == 10.0);
-        JsonNode secondShape = root.get(1);
-        assertTrue(secondShape.get("type").asText().equals("Square"));
-        assertTrue(secondShape.get("side").asDouble() == 10.0);
+    public void testImportShapeFromJson() throws IOException {
+        List<Shape> shapeList = new ArrayList<>();
+        shapeList.add(shapeFactory.createCircle(10));
+        shapeList.add(shapeFactory.createSquare(10));
 
+        List<Shape> resultList = shapeService.importShapesFromJSON("src/test/resources/testShapes.json");
 
+        System.out.println(shapeList);
+        System.out.println(resultList);
+        assertEquals(shapeList.get(1), resultList.get(1));
     }
 
-
-    @Test
-    public void testImportShapesFromJSON() throws IOException {
-        shapeService.importShapesFromJSON("testImportJson.json");
-        JsonNode root = objectMapper.readTree(new File("testImportJson.json"));
-        assertTrue(root.isArray());
-        assertTrue(root.size() == 2);
-        JsonNode firstShape = root.get(0);
-        assertTrue(firstShape.get("type").asText().equals("Circle"));
-        assertTrue(firstShape.get("radius").asDouble() == 10.0);
-        JsonNode secondShape = root.get(1);
-        assertTrue(secondShape.get("type").asText().equals("Square"));
-        assertTrue(secondShape.get("side").asDouble() == 10.0);
-        Files.delete(Paths.get("testImportJson.json"));
-
-    }
 
     @Test
     public void shouldReturnShapeWithLargestArea() {

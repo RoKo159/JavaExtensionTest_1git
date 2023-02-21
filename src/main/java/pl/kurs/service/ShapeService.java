@@ -1,28 +1,37 @@
 package pl.kurs.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pl.kurs.customSerializer.ObjectMapperHolder;
+import pl.kurs.customSerializer.ShapeDeserializer;
 import pl.kurs.models.Shape;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 
 public class ShapeService {
+    private ObjectMapper objectMapper = ObjectMapperHolder.INSTANCE.getObjectMapper();
 
+    public ShapeService() {
+    }
 
     public void exportShapesToJSON(List<Shape> shapes, String path) throws IOException {
-        ObjectMapper objectMapper = ObjectMapperHolder.INSTANCE.getObjectMapper();
         objectMapper.writeValue(new File(path), shapes);
     }
 
     public List<Shape> importShapesFromJSON(String path) throws IOException {
-        ObjectMapper objectMapper = ObjectMapperHolder.INSTANCE.getObjectMapper();
-        return objectMapper.readValue(new File(path), new ArrayList<Shape>().getClass());
+        String json = Files.readString(Paths.get(path));
+        List<Shape> shapeList = objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, Shape.class));
+
+        return shapeList;
     }
+
 
     public Shape findShapeWithLargestArea(List<Shape> shapes) {
         return shapes
